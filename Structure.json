@@ -1,0 +1,108 @@
+{
+    //https://worktogether.firebaseio.com/users
+    "users": {
+        //https://worktogether.firebaseio.com/users/$user1_Id
+        "$user1_Id":{
+            "name":"user1",
+            "uid": "1",
+            "email": "user1@test.com",
+            "rooms":{
+                "roomA":true,
+                "roomB":true
+            },
+            "friends":{
+                "user2":true,
+                "user3":true
+            }
+        },
+        "$user2_Id":{
+            "name":"user2",
+            "uid": "2",
+            "email": "user2@test.com",
+            "rooms":{
+                "roomA":true,
+                "roomB":true
+            },
+            "friends":{
+                "user1":true
+            }
+        }
+    },
+    
+    //https://worktogether.firebaseio.com/rooms/
+    "rooms": {
+         //https://worktogether.firebaseio.com/rooms/g_uidA
+        "$r_id_roomA":{
+            "roomName":"roomA",
+            "hostUser": "user1",
+            "roomCode": "AB12",
+            "members":{
+                "user1":true,
+                "user2":true
+            },
+            "exists": true
+        }
+    },
+    
+    
+    "drawings":{
+        "$id1": {
+            "color": "red",
+            "lineWidth": 2.0,
+            "points": {
+                "0": {"x":26, "y": 54},
+                "1": {"x":26, "y": 54},
+                "2": {"x":26, "y": 54},
+                "3": {"x":26, "y": 54}
+            }
+        },
+        "$id2": {
+            "color": "red", //CGColor
+            "lineWidth": 2.0, //CGFloat
+            "points": { //[CGPoint]
+                "0": {"x":26, "y": 54},
+                "1": {"x":26, "y": 54},
+                "2": {"x":26, "y": 54},
+                "3": {"x":26, "y": 54}
+            }
+        },
+        "$id3": {
+            "color": "red",
+            "lineWidth": 2.0,
+            "points": {
+                "0": {"x":26, "y": 54},
+                "1": {"x":26, "y": 54},
+                "2": {"x":26, "y": 54},
+                "3": {"x":26, "y": 54}
+            }
+        }
+    } 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+}
+
+
+
+
+
+
+
+
+//  "messages":{
+//                 "user1":[
+//                     {"time":"12:01", "content": "How are you"},
+//                     {"time":"12:03", "content": "good, thanks"},
+//                     {"time":"12:05", "content": "bye"}
+//                 ],
+//                 "user2":[
+//                     {"time":"12:02", "content": "fine, and you"},
+//                     {"time":"12:04", "content": "bye"}
+//                 ]
+//             }
