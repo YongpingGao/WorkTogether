@@ -14,16 +14,19 @@ Team leader (host user) can create a room, tell his teamates roomId
 
 ![Image of iphone2](screenshots/iphone2.PNG)
 
-Other team members can join a room by typing in roomID
+Other team members can join a room by typing in roomID:
+
 ![Image of ipad2](screenshots/ipad2.png)
 
-In the room, host user has the permission to drawing something in the drawing panel,
+In the room, host user has the permission to draw something in the drawing panel,
 and it will share his screen to his team members at the same time.
 
 Host User:
+
 ![Image of iphone2](screenshots/iphone3.PNG)
 
 Another team member: 
+
 ![Image of ipad](screenshots/ipad.png)
 
 
