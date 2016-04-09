@@ -6,6 +6,7 @@
             "name":"user1",
             "uid": "1",
             "email": "user1@test.com",
+           //https://worktogether.firebaseio.com/users/$user1_Id/"rooms"
             "rooms":{
                 "roomA":true,
                 "roomB":true
@@ -31,7 +32,7 @@
     
     //https://worktogether.firebaseio.com/rooms/
     "rooms": {
-         //https://worktogether.firebaseio.com/rooms/g_uidA
+         //https://worktogether.firebaseio.com/rooms/r_id_roomA
         "$r_id_roomA":{
             "roomName":"roomA",
             "hostUser": "user1",

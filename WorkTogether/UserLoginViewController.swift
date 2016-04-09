@@ -15,7 +15,7 @@ class UserLoginViewController: UIViewController {
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var nameTextField: UITextField!
     
-    let segueIdentifier = "LogInSegue"
+    
     
     let ref = Firebase(url: "https://worktogether.firebaseio.com")
     let usersRef = Firebase(url: "https://worktogether.firebaseio.com/users")
@@ -32,11 +32,30 @@ class UserLoginViewController: UIViewController {
     override func viewDidAppear(animated: Bool) {
         usersRef.observeAuthEventWithBlock { (authData) -> Void in
             if authData != nil {
-                
-                self.performSegueWithIdentifier(self.segueIdentifier, sender: nil)
+                self.user = User(authData: authData)
+                FirebaseWrapper.Refs.allUsersRef.childByAppendingPath(authData.uid).observeSingleEventOfType(.Value, withBlock: { (snapshot) in
+                    self.user = User(snapshot: snapshot)
+                    self.performSegueWithIdentifier("LogInSegue", sender: nil)
+                })
             }
         }
     }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+       
+        if segue.identifier == "LogInSegue" {
+            if let tabBarController = segue.destinationViewController as? UITabBarController {
+                if let navigationController = tabBarController.viewControllers?.last as? UINavigationController {
+                    if let remoteConnectionViewController = navigationController.topViewController as? RemoteConnectionViewController {
+                        remoteConnectionViewController.user = user
+                    }
+                   
+                }
+            }
+        }
+    }
+
+    
     
     @IBAction func login(sender: UIButton) {
         

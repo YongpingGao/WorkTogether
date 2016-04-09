@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -122,18 +122,18 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-5503" y="-282"/>
+            <point key="canvasLocation" x="-6155" y="-810"/>
         </scene>
         <!--Room Memebers-->
         <scene sceneID="hud-as-TcY">
             <objects>
-                <tableViewController id="1yd-dT-Gtp" customClass="UsersTableViewController" customModule="WorkTogether" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="1yd-dT-Gtp" customClass="RoomMembersViewController" customModule="WorkTogether" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="50" sectionHeaderHeight="28" sectionFooterHeight="28" id="hxw-Iv-Tby">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="UITableViewCell" rowHeight="50" id="3Hs-GD-cG5">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="RoomMembersCell" rowHeight="50" id="3Hs-GD-cG5">
                                 <rect key="frame" x="0.0" y="92" width="600" height="50"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="3Hs-GD-cG5" id="Avo-gC-NLL">
@@ -163,7 +163,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x3A-qF-Ojc" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="uE9-de-yY7" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="-1653" y="1563"/>
+            <point key="canvasLocation" x="-3107" y="903"/>
         </scene>
         <!--Chatting View Controller-->
         <scene sceneID="1nU-4l-R3Y">
@@ -214,9 +214,9 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="yOf-8u-bYz" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-576" y="354"/>
+            <point key="canvasLocation" x="-3764" y="-93"/>
         </scene>
-        <!--Remote Mode-->
+        <!--Rooms-->
         <scene sceneID="yyi-MZ-IoG">
             <objects>
                 <tableViewController id="doV-91-Iza" customClass="RemoteConnectionViewController" customModule="WorkTogether" customModuleProvider="target" sceneMemberID="viewController">
@@ -232,6 +232,9 @@
                                     <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <segue destination="VZB-Ym-tYx" kind="showDetail" identifier="RoomMembersViewController" id="KfS-zx-SqM"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
@@ -239,8 +242,12 @@
                             <outlet property="delegate" destination="doV-91-Iza" id="EsA-ob-sug"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Remote Mode" id="ZiI-0f-GHW">
-                        <barButtonItem key="leftBarButtonItem" title="Log out" id="nUF-kO-bfD"/>
+                    <navigationItem key="navigationItem" title="Rooms" id="ZiI-0f-GHW">
+                        <barButtonItem key="leftBarButtonItem" title="Log out" id="nUF-kO-bfD">
+                            <connections>
+                                <segue destination="WU7-Pt-nmr" kind="unwind" unwindAction="logout:sender:" id="2dX-0b-EtO"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="Dmc-0W-Uhq">
                             <connections>
                                 <action selector="createRoom:" destination="doV-91-Iza" id="4XH-Sd-m8I"/>
@@ -248,12 +255,13 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <segue destination="VZB-Ym-tYx" kind="showDetail" identifier="CreateRoomSegue" id="4Vd-vk-jvj"/>
+                        <segue destination="VZB-Ym-tYx" kind="showDetail" identifier="RoomMembersViewController" id="4Vd-vk-jvj"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fg9-qY-Izx" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="WU7-Pt-nmr" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="-5091" y="1409"/>
+            <point key="canvasLocation" x="-5743" y="881"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="Ipc-x4-HWq">
@@ -291,7 +299,7 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="RWJ-QE-Z81" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="1dN-dx-0bS" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
-            <point key="canvasLocation" x="-4493" y="501"/>
+            <point key="canvasLocation" x="-5145" y="-27"/>
         </scene>
         <!--Tab Bar Controller-->
         <scene sceneID="9HH-yG-mbP">
@@ -309,7 +317,7 @@
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KOD-8o-SwN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-5923" y="507"/>
+            <point key="canvasLocation" x="-6575" y="-21"/>
         </scene>
         <!--Drawing View Controller-->
         <scene sceneID="wGl-bE-6Vd">
@@ -342,7 +350,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sZa-nR-tlx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3295" y="2380"/>
+            <point key="canvasLocation" x="-3947" y="1852"/>
         </scene>
         <!--Local-->
         <scene sceneID="NqO-2q-0MA">
@@ -361,7 +369,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uOg-JM-qBh" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-5231" y="507"/>
+            <point key="canvasLocation" x="-5883" y="-21"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="fO6-ZG-wu1">
@@ -379,7 +387,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KbV-3w-rhM" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2439" y="1563"/>
+            <point key="canvasLocation" x="-3885" y="903"/>
         </scene>
         <!--Split View Controller-->
         <scene sceneID="qng-b7-9jB">
@@ -392,7 +400,7 @@
                 </splitViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="afe-Cc-XeF" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-4087" y="1417"/>
+            <point key="canvasLocation" x="-4739" y="881"/>
         </scene>
         <!--Remote-->
         <scene sceneID="j3V-sB-2kb">
@@ -411,11 +419,12 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SQj-gl-snW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-5923" y="1409"/>
+            <point key="canvasLocation" x="-6575" y="881"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
+        <segue reference="KfS-zx-SqM"/>
         <segue reference="xty-82-nxk"/>
-        <segue reference="uzp-7U-lME"/>
+        <segue reference="yGS-nr-CLY"/>
     </inferredMetricsTieBreakers>
 </document>

@@ -7,33 +7,70 @@
 //
 
 import UIKit
-
-class RemoteConnectionViewController: UITableViewController, RoomCodeGeneratorDelegate {
-
-    var rooms: [Room] = []
-    let roomCodeGenerator = RoomCodeGenerator()
+import Firebase
+// user's all rooms
+class RemoteConnectionViewController: UITableViewController {
+    
+    let cloud = FirebaseWrapper()
+    var rooms = [Room]()
+    var user: User!
     override func viewDidLoad() {
         super.viewDidLoad()
-        roomCodeGenerator.delegate = self
     }
-
+    
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        FirebaseWrapper.Refs.allUsersRef.childByAppendingPath(user.uid).childByAppendingPath("rooms").observeSingleEventOfType(.Value, withBlock: { snapshot in
+            
+            for snapChild in snapshot.children.allObjects as! [FDataSnapshot]{
+            
+                FirebaseWrapper.Refs.roomsRef.childByAppendingPath(snapChild.value as! String).observeSingleEventOfType(.Value, withBlock: {snapshot in
+                    let roomName = snapshot.value["roomName"] as! String
+                    let hostUser = snapshot.value["hostUser"] as! String
+                    self.rooms.append(Room(roomName: roomName, hostUser: hostUser))
+                    self.tableView.reloadData()
+                })
+            }
+            
+        })         // join
+        //        cloud.observeValueEventWithRef(FirebaseWrapper.Refs.roomsRef) { (_) -> Void in
+        //            if self.user != nil {
+        //                self.cloud.updateValueWithRef(FirebaseWrapper.Refs.allUsersRef.childByAppendingPath(self.user.uid).childByAppendingPath("rooms"), value: [self.room.roomCode: true])
+        //                 print("2")
+        //            }
+        //        }
+        //
+        //        cloud.observeValueEventWithRef(FirebaseWrapper.Refs.roomCodeRef) { (snapshot) -> Void in
+        //            self.codes = []
+        //            for code in snapshot.children {
+        //                if let key = code.key {
+        //                    self.codes.append(key!)
+        //                }
+        //            }
+        //             print("3")
+        //        }
+        //
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        rooms.removeAll()
+    }
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-
+    
     @IBAction func createRoom(sender: AnyObject) {
         
         let alertViewController = UIAlertController(title: "Start Working", message: "Create or Join a room", preferredStyle: .Alert)
-        
         let createAction = UIAlertAction(title: "Create a room", style: .Default) { (_) -> Void in
-           self.createRoomSuccessfulAlert()
+            self.createRoomSuccessfulAlert()
         }
-        
         let joinAction = UIAlertAction(title: "Join a room", style: .Default) { (_) -> Void in
             self.joinRoomAlert()
         }
-        
         let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
         
         alertViewController.addAction(createAction)
@@ -44,67 +81,86 @@ class RemoteConnectionViewController: UITableViewController, RoomCodeGeneratorDe
         
     }
     
+    
     private func createRoomSuccessfulAlert() {
-        
-        let roomCode = roomCodeGenerator.randomCodeString
-        let createRoomAlertController = UIAlertController(title: "Create a room", message: "Your room ID is \" \(roomCode) \", tell your coworkers to join this room", preferredStyle: .Alert)
-        let okAction = UIAlertAction(title: "OK", style: .Cancel) { (_) -> Void in
-            
-            
-            // TODO: - CLOUD
-            let room = Room(r_id:"001", hostUser:User(uid: "aa", name: "aa", email: "aa"), members: [User(uid: "aa", name: "aa", email: "aa")], exists: true, roomCode: roomCode)
-            self.rooms.append(room)
-            self.tableView.reloadData()
-            
-            self.performSegueWithIdentifier("CreateRoomSegue", sender: nil)
+        let alertController = UIAlertController(title: "Enter Room Name", message: "Please enter room name", preferredStyle: .Alert)
+        alertController.addTextFieldWithConfigurationHandler { (roomNameTextField) in
+            roomNameTextField.placeholder = "Room Name"
         }
-        createRoomAlertController.addAction(okAction)
-        
-        
-        
-        
-        presentViewController(createRoomAlertController, animated: true, completion: nil)
-
+        let OKAction = UIAlertAction(title: "OK", style: .Default) { (_) in
+            if let textField = alertController.textFields?.first {
+                if textField.text != "" {
+                    let room = Room(roomName: textField.text!, hostUser: self.user.name)
+                    let createRoomAlertController = UIAlertController(title: "Create Successful", message: "Your room ID is \" \(room.roomCode) \", tell your coworkers to join this room", preferredStyle: .Alert)
+                    let okAction = UIAlertAction(title: "OK", style: .Cancel) { (_) -> Void in
+                        self.cloud.setValueWithRef(FirebaseWrapper.Refs.roomsRef.childByAppendingPath(room.roomCode), value: room.serializeToDictionary())
+                        FirebaseWrapper.Refs.allUsersRef.childByAppendingPath(self.user.uid).childByAppendingPath("rooms").childByAutoId().setValue(room.roomCode)
+                        FirebaseWrapper.Refs.roomCodeRef.childByAutoId().setValue(room.roomCode)
+                        self.rooms.append(room)
+                        self.tableView.reloadData()
+                        self.performSegueWithIdentifier("RoomMembersViewController", sender: nil)
+                    }
+                    createRoomAlertController.addAction(okAction)
+                    self.presentViewController(createRoomAlertController, animated: true, completion: nil)
+                } else {
+                    let alertController = UIAlertController(title: "Warning", message: "Room Name can't be empty", preferredStyle: .Alert)
+                    alertController.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
+                    self.presentViewController(alertController, animated: false, completion: nil)
+                }
+            }
+        }
+        alertController.addAction(OKAction)
+        presentViewController(alertController, animated: true, completion: nil)
     }
     
-    
     private func joinRoomAlert() {
-        let joinRoomAlertController = UIAlertController(title: "Join a room", message: "Enter the room code from room owner", preferredStyle: .Alert)
+        let joinRoomAlertController = UIAlertController(title: "Join a new room", message: "Enter the room code from room owner", preferredStyle: .Alert)
         
         joinRoomAlertController.addTextFieldWithConfigurationHandler { (textCode) -> Void in
             textCode.placeholder = "Enter room code"
         }
-        
-        let okAction = UIAlertAction(title: "OK", style: .Default) { (_) -> Void in
-            if let textField = joinRoomAlertController.textFields {
-                let codeField = textField[0]
-                if let code = codeField.text {
-                    print("Check if \(code) is valide!!")
-                    
-                    // TODO: - CLOUD from cloud Check if \(code) is valide
-                    // if yes -> add a room member
-                    
-                    if true {
-                        // go to cloud -> find room id -> add a new user
-                        let room = Room(r_id:"002", hostUser:User(uid: "aa", name: "aa", email: "aa"), members: [User(uid: "bb", name: "bb", email: "bb")], exists: true, roomCode: code)
-                        self.rooms.append(room)
-                        self.tableView.reloadData()
-                        self.performSegueWithIdentifier("CreateRoomSegue", sender: nil)
+        let OKAction = UIAlertAction(title: "OK", style: .Default) { (_) -> Void in
+            if let code = joinRoomAlertController.textFields?.first?.text {
+                FirebaseWrapper.Refs.roomCodeRef.queryOrderedByValue().queryEqualToValue(code).observeEventType(.Value, withBlock: { snapshot in
+                    if snapshot.exists() { // if find the room code
+                        self.cloud.observeSingleEventWithRef(FirebaseWrapper.Refs.roomsRef.childByAppendingPath(code), completionHanlder: { (snapshot) -> Void in
+                            FirebaseWrapper.Refs.roomsRef.childByAppendingPath(code).observeSingleEventOfType(.Value, withBlock: {snapshot in // update cloud
+                                var room = Room(dictionary: snapshot.value as! [String: AnyObject])
+                                room.members.append(self.user.name)
+                                FirebaseWrapper.Refs.roomsRef.childByAppendingPath(code).setValue(room.serializeToDictionary())
+                                FirebaseWrapper.Refs.allUsersRef.childByAppendingPath(self.user.uid).childByAppendingPath("rooms").childByAutoId().setValue(code)
+                                self.rooms.append(room)
+                                self.performSegueWithIdentifier("RoomMembersViewController", sender: nil)
+                            })
+                        })
+                    } else { // can't find the room code
+                        let alertController = UIAlertController(title: "Warning", message: "Can't find this room code", preferredStyle: .Alert)
+                        let cancelAction = UIAlertAction(title: "Cancel", style: .Cancel, handler: nil)
+                        alertController.addAction(cancelAction)
+                        self.presentViewController(alertController, animated: true, completion: nil)
                     }
-                    // if no -> alert!
-                }
+                })
             }
         }
-        
-        joinRoomAlertController.addAction(okAction)
-        
+        joinRoomAlertController.addAction(OKAction)
         presentViewController(joinRoomAlertController, animated: true, completion: nil)
     }
     
-    func didFinishGenerateRoomCode(roomCode: String) -> Bool {
-        //TODO: - If roomCode is not in cloud
-        return true
-        
+    // MARK: - Segue
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "RoomMembersViewController" {
+            if let splitViewController = segue.destinationViewController as? UISplitViewController {
+                if let navigationController = splitViewController.viewControllers.first as? UINavigationController {
+                    if let roomMembersViewController = navigationController.topViewController as? RoomMembersViewController {
+                        if let newRoom = rooms.last {
+                            roomMembersViewController.room = newRoom
+                            print("-->roomcode \(newRoom)")
+                        }
+                    }
+                    
+                }
+            }
+        }
     }
     
     @IBAction func backToRemoteConection(segue: UIStoryboardSegue, sender: UIBarButtonItem){}
@@ -118,7 +174,7 @@ class RemoteConnectionViewController: UITableViewController, RoomCodeGeneratorDe
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("RoomCell", forIndexPath: indexPath)
-        cell.textLabel?.text = rooms[indexPath.row].roomCode
+        cell.textLabel?.text = rooms[indexPath.row].roomName
         return cell
     }
     
