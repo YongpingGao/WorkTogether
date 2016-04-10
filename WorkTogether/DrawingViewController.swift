@@ -14,8 +14,7 @@ class DrawingViewController: UIViewController, DrawViewDelegate {
     @IBOutlet weak var drawView: DrawView!
     
     var paths = [DrawingPath]()
-    
-    let drawingRef = Firebase(url: "https://worktogether.firebaseio.com/drawings")
+    var room: Room!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,22 +23,17 @@ class DrawingViewController: UIViewController, DrawViewDelegate {
     
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        drawingRef.observeEventType(.ChildAdded, withBlock: {(snapshot) -> Void in
+        FirebaseWrapper.Refs.roomsRef.childByAppendingPath(room.roomCode).childByAppendingPath("paths").observeEventType(.ChildAdded, withBlock: {(snapshot) -> Void in
             if let path = DrawingPath.parse(snapshot.value as! [String: AnyObject]) {
                 self.paths.append(path)
                 self.drawView.paths = self.paths
             }
         })
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     
     // MARK: - Delegate for DrawingView
     func didFinishDrawingPath(path: DrawingPath, drawView: DrawView) {
-        let newPathRef = drawingRef.childByAutoId()
+        let newPathRef = FirebaseWrapper.Refs.roomsRef.childByAppendingPath(room.roomCode).childByAppendingPath("paths").childByAutoId()
         newPathRef.setValue(path.serializeToDictionary()) { (error, firebase) -> Void in
             if error != nil {
                 print(error)

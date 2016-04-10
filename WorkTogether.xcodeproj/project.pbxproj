@@ -12,11 +12,11 @@
 		9723D8071C8B60260013F1EB /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9723D8051C8B60260013F1EB /* Main.storyboard */; };
 		9723D8091C8B60260013F1EB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9723D8081C8B60260013F1EB /* Assets.xcassets */; };
 		9723D80C1C8B60260013F1EB /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9723D80A1C8B60260013F1EB /* LaunchScreen.storyboard */; };
+		9729E9BD1CBAE35D00BBA6CD /* Todo in Resources */ = {isa = PBXBuildFile; fileRef = 9729E9BC1CBAE35D00BBA6CD /* Todo */; };
 		9739949C1C91196400973C07 /* Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9739949B1C91196300973C07 /* Utility.swift */; };
 		9739949E1C912B1600973C07 /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9739949D1C912B1600973C07 /* Room.swift */; };
 		973994A21C91C9BE00973C07 /* FirebaseWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 973994A11C91C9BE00973C07 /* FirebaseWrapper.swift */; };
 		973994A41C91CE6D00973C07 /* RoomMembersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 973994A31C91CE6D00973C07 /* RoomMembersViewController.swift */; };
-		973994A61C91F40E00973C07 /* TODO.md in Sources */ = {isa = PBXBuildFile; fileRef = 973994A51C91F40E00973C07 /* TODO.md */; };
 		973D8D511C8E74D900C5E7CC /* DrawingPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 973D8D501C8E74D900C5E7CC /* DrawingPath.swift */; };
 		973D8D531C8E76AF00C5E7CC /* DrawingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 973D8D521C8E76AF00C5E7CC /* DrawingViewController.swift */; };
 		973D8D561C8E781F00C5E7CC /* DrawView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 973D8D551C8E781F00C5E7CC /* DrawView.swift */; };
@@ -37,11 +37,11 @@
 		9723D8081C8B60260013F1EB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		9723D80B1C8B60260013F1EB /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9723D80D1C8B60260013F1EB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9729E9BC1CBAE35D00BBA6CD /* Todo */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Todo; sourceTree = "<group>"; };
 		9739949B1C91196300973C07 /* Utility.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utility.swift; sourceTree = "<group>"; };
 		9739949D1C912B1600973C07 /* Room.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
 		973994A11C91C9BE00973C07 /* FirebaseWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FirebaseWrapper.swift; sourceTree = "<group>"; };
 		973994A31C91CE6D00973C07 /* RoomMembersViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RoomMembersViewController.swift; sourceTree = "<group>"; };
-		973994A51C91F40E00973C07 /* TODO.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = TODO.md; sourceTree = "<group>"; };
 		973D8D501C8E74D900C5E7CC /* DrawingPath.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingPath.swift; sourceTree = "<group>"; };
 		973D8D521C8E76AF00C5E7CC /* DrawingViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingViewController.swift; sourceTree = "<group>"; };
 		973D8D551C8E781F00C5E7CC /* DrawView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawView.swift; sourceTree = "<group>"; };
@@ -78,7 +78,6 @@
 		9723D7F51C8B60260013F1EB = {
 			isa = PBXGroup;
 			children = (
-				973994A51C91F40E00973C07 /* TODO.md */,
 				9723D8001C8B60260013F1EB /* WorkTogether */,
 				9723D7FF1C8B60260013F1EB /* Products */,
 				3FFBAAD34439C2439CBE12C7 /* Pods */,
@@ -105,6 +104,7 @@
 				9723D8081C8B60260013F1EB /* Assets.xcassets */,
 				9723D80A1C8B60260013F1EB /* LaunchScreen.storyboard */,
 				9723D80D1C8B60260013F1EB /* Info.plist */,
+				9729E9BC1CBAE35D00BBA6CD /* Todo */,
 			);
 			path = WorkTogether;
 			sourceTree = "<group>";
@@ -214,6 +214,7 @@
 			files = (
 				9723D80C1C8B60260013F1EB /* LaunchScreen.storyboard in Resources */,
 				9723D8091C8B60260013F1EB /* Assets.xcassets in Resources */,
+				9729E9BD1CBAE35D00BBA6CD /* Todo in Resources */,
 				9723D8071C8B60260013F1EB /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -282,7 +283,6 @@
 				9739949E1C912B1600973C07 /* Room.swift in Sources */,
 				973994A41C91CE6D00973C07 /* RoomMembersViewController.swift in Sources */,
 				973D8D561C8E781F00C5E7CC /* DrawView.swift in Sources */,
-				973994A61C91F40E00973C07 /* TODO.md in Sources */,
 				9739949C1C91196400973C07 /* Utility.swift in Sources */,
 				973D8D511C8E74D900C5E7CC /* DrawingPath.swift in Sources */,
 				977ADF3D1C8B64C100A677E3 /* User.swift in Sources */,

@@ -155,7 +155,7 @@
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="compose" id="uDn-Yg-MWd">
                             <connections>
-                                <segue destination="UiD-Rm-2YW" kind="showDetail" id="yGS-nr-CLY"/>
+                                <segue destination="UiD-Rm-2YW" kind="showDetail" identifier="ItemButtonSegue" id="yGS-nr-CLY"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -350,7 +350,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="sZa-nR-tlx" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-3947" y="1852"/>
+            <point key="canvasLocation" x="-4712" y="1724"/>
         </scene>
         <!--Local-->
         <scene sceneID="NqO-2q-0MA">

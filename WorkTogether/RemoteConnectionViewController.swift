@@ -11,57 +11,36 @@ import Firebase
 // user's all rooms
 class RemoteConnectionViewController: UITableViewController {
     
+    // MARK: - Propertires
     let cloud = FirebaseWrapper()
     var rooms = [Room]()
     var user: User!
+    
+    // MARK: - ViewController Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-    
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
-        
+        rooms.removeAll()
+        // load all rooms of current user from cloud
         FirebaseWrapper.Refs.allUsersRef.childByAppendingPath(user.uid).childByAppendingPath("rooms").observeSingleEventOfType(.Value, withBlock: { snapshot in
-            
-            for snapChild in snapshot.children.allObjects as! [FDataSnapshot]{
-            
+            for snapChild in snapshot.children.allObjects as! [FDataSnapshot] {
                 FirebaseWrapper.Refs.roomsRef.childByAppendingPath(snapChild.value as! String).observeSingleEventOfType(.Value, withBlock: {snapshot in
-                    let roomName = snapshot.value["roomName"] as! String
-                    let hostUser = snapshot.value["hostUser"] as! String
-                    self.rooms.append(Room(roomName: roomName, hostUser: hostUser))
+                    if let room = self.cloud.findRoomBasedOnSnapshot(snapshot) {
+                        self.rooms.append(room)
+                    } else {
+                        print("can't find room")
+                    }
                     self.tableView.reloadData()
                 })
             }
             
-        })         // join
-        //        cloud.observeValueEventWithRef(FirebaseWrapper.Refs.roomsRef) { (_) -> Void in
-        //            if self.user != nil {
-        //                self.cloud.updateValueWithRef(FirebaseWrapper.Refs.allUsersRef.childByAppendingPath(self.user.uid).childByAppendingPath("rooms"), value: [self.room.roomCode: true])
-        //                 print("2")
-        //            }
-        //        }
-        //
-        //        cloud.observeValueEventWithRef(FirebaseWrapper.Refs.roomCodeRef) { (snapshot) -> Void in
-        //            self.codes = []
-        //            for code in snapshot.children {
-        //                if let key = code.key {
-        //                    self.codes.append(key!)
-        //                }
-        //            }
-        //             print("3")
-        //        }
-        //
+           
+        })
     }
     
-    override func viewDidDisappear(animated: Bool) {
-        rooms.removeAll()
-    }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
+    // MARK: - Create or Join a room
     @IBAction func createRoom(sender: AnyObject) {
         
         let alertViewController = UIAlertController(title: "Start Working", message: "Create or Join a room", preferredStyle: .Alert)
@@ -93,7 +72,7 @@ class RemoteConnectionViewController: UITableViewController {
                     let room = Room(roomName: textField.text!, hostUser: self.user.name)
                     let createRoomAlertController = UIAlertController(title: "Create Successful", message: "Your room ID is \" \(room.roomCode) \", tell your coworkers to join this room", preferredStyle: .Alert)
                     let okAction = UIAlertAction(title: "OK", style: .Cancel) { (_) -> Void in
-                        self.cloud.setValueWithRef(FirebaseWrapper.Refs.roomsRef.childByAppendingPath(room.roomCode), value: room.serializeToDictionary())
+                        FirebaseWrapper.Refs.roomsRef.childByAppendingPath(room.roomCode).setValue(room.serializeToDictionary())
                         FirebaseWrapper.Refs.allUsersRef.childByAppendingPath(self.user.uid).childByAppendingPath("rooms").childByAutoId().setValue(room.roomCode)
                         FirebaseWrapper.Refs.roomCodeRef.childByAutoId().setValue(room.roomCode)
                         self.rooms.append(room)
@@ -123,14 +102,17 @@ class RemoteConnectionViewController: UITableViewController {
             if let code = joinRoomAlertController.textFields?.first?.text {
                 FirebaseWrapper.Refs.roomCodeRef.queryOrderedByValue().queryEqualToValue(code).observeEventType(.Value, withBlock: { snapshot in
                     if snapshot.exists() { // if find the room code
-                        self.cloud.observeSingleEventWithRef(FirebaseWrapper.Refs.roomsRef.childByAppendingPath(code), completionHanlder: { (snapshot) -> Void in
+                        FirebaseWrapper.Refs.roomsRef.childByAppendingPath(code).observeSingleEventOfType(.Value, withBlock: { (snapshot) -> Void in
                             FirebaseWrapper.Refs.roomsRef.childByAppendingPath(code).observeSingleEventOfType(.Value, withBlock: {snapshot in // update cloud
-                                var room = Room(dictionary: snapshot.value as! [String: AnyObject])
-                                room.members.append(self.user.name)
-                                FirebaseWrapper.Refs.roomsRef.childByAppendingPath(code).setValue(room.serializeToDictionary())
-                                FirebaseWrapper.Refs.allUsersRef.childByAppendingPath(self.user.uid).childByAppendingPath("rooms").childByAutoId().setValue(code)
-                                self.rooms.append(room)
-                                self.performSegueWithIdentifier("RoomMembersViewController", sender: nil)
+                                if let room = self.cloud.findRoomBasedOnSnapshot(snapshot) {
+                                    room.members.append(self.user.name)
+                                    FirebaseWrapper.Refs.roomsRef.childByAppendingPath(code).setValue(room.serializeToDictionary())
+                                    FirebaseWrapper.Refs.allUsersRef.childByAppendingPath(self.user.uid).childByAppendingPath("rooms").childByAutoId().setValue(code)
+                                    self.rooms.append(room)
+                                    self.performSegueWithIdentifier("RoomMembersViewController", sender: nil)
+                                } else {
+                                    print("Can't find a room in the cloud")
+                                }
                             })
                         })
                     } else { // can't find the room code
@@ -152,19 +134,24 @@ class RemoteConnectionViewController: UITableViewController {
             if let splitViewController = segue.destinationViewController as? UISplitViewController {
                 if let navigationController = splitViewController.viewControllers.first as? UINavigationController {
                     if let roomMembersViewController = navigationController.topViewController as? RoomMembersViewController {
-                        if let newRoom = rooms.last {
-                            roomMembersViewController.room = newRoom
-                            print("-->roomcode \(newRoom)")
+                        if let drawingViewController = splitViewController.viewControllers.last as? DrawingViewController {
+                            if let row = tableView.indexPathForSelectedRow?.row {
+                                roomMembersViewController.room = rooms[row] // if select a specific row
+                                drawingViewController.room = rooms[row] // if select a specific row
+                            } else {
+                                roomMembersViewController.room = rooms.last // else triggered automatically
+                                drawingViewController.room = rooms.last // else triggered automatically
+                            }
                         }
                     }
-                    
                 }
             }
         }
     }
+
+ 
     
     @IBAction func backToRemoteConection(segue: UIStoryboardSegue, sender: UIBarButtonItem){}
-    
     
     // MARK: - Tableview Delegate
     

@@ -8,16 +8,12 @@
 
 import UIKit
 
-
 class RoomMembersViewController: UITableViewController {
     
     var room: Room!
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-
     }
 
     override func didReceiveMemoryWarning() {
@@ -25,14 +21,20 @@ class RoomMembersViewController: UITableViewController {
     }
     
     override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        print(room.roomCode)
-        FirebaseWrapper.Refs.roomsRef.childByAppendingPath(room.roomCode).observeSingleEventOfType(.ChildAdded, withBlock: {snapshot in
-            print("---> \(snapshot)")
-            //            room.members.append(<#T##newElement: Element##Element#>)
-            //            self.tableView.reloadData()
+        self.room.members.removeAll()
+        FirebaseWrapper.Refs.roomsRef.childByAppendingPath(room.roomCode).childByAppendingPath("members").observeEventType(.ChildAdded, withBlock: { snapshot in
+            let memberAdded = snapshot.value as! String
+            if !self.room.members.contains(memberAdded) {
+                self.room.members.append(memberAdded)
+                self.tableView.reloadData()
+            }
         })
-        
+        super.viewDidAppear(animated)
+    }
+    
+    override func viewDidDisappear(animated: Bool) {
+        self.room.members.removeAll()
+        super.viewDidDisappear(animated)
     }
 
     // MARK: - Table view data source
@@ -51,6 +53,14 @@ class RoomMembersViewController: UITableViewController {
         cell.textLabel?.text = room.members[indexPath.row]
 
         return cell
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "ItemButtonSegue" {
+            if let drawingViewController = segue.destinationViewController as? DrawingViewController {
+                drawingViewController.room = room // else triggered automatically
+            }
+        }
     }
 
     /*

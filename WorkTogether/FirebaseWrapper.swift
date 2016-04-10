@@ -15,32 +15,8 @@ class FirebaseWrapper {
         static let baseRef = Firebase(url: "https://worktogether.firebaseio.com")
         static let allUsersRef = Firebase(url: "https://worktogether.firebaseio.com/users")
         static let roomsRef = Firebase(url: "https://worktogether.firebaseio.com/rooms")
-        static let drawingsRef = Firebase(url: "https://worktogether.firebaseio.com/drawings")
+//        static let drawingsRef = Firebase(url: "https://worktogether.firebaseio.com/rooms/drawings")
         static let roomCodeRef = Firebase(url: "https://worktogether.firebaseio.com/roomcodes")
-    }
-    
-    func authEventListener(ref: Firebase!, completionHandler: ((FAuthData!) -> Void)!) {
-        ref.observeAuthEventWithBlock(completionHandler)
-    }
-    
-    func observeValueEventWithRef(ref: Firebase!, completionHanlder: ((FDataSnapshot!) -> Void)!) {
-        ref.observeEventType(.Value, withBlock: completionHanlder)
-    }
-    
-    func observeChildAddedEventWithRef(ref: Firebase!, completionHanlder: ((FDataSnapshot!) -> Void)!) {
-        ref.observeEventType(.ChildAdded, withBlock: completionHanlder)
-    }
-    
-    func observeSingleEventWithRef(ref: Firebase!, completionHanlder: ((FDataSnapshot!) -> Void)!) {
-        ref.observeSingleEventOfType(.Value, withBlock: completionHanlder)
-    }
-    
-    func setValueWithRef(ref: Firebase!, value:AnyObject) {
-        ref.setValue(value)
-    }
-    
-    func updateValueWithRef(ref: Firebase!, value:AnyObject) {
-        ref.updateChildValues(value as! [NSObject : AnyObject])
     }
     
     func roomCodeExistInCloud(roomCode: String) -> Bool {
@@ -55,21 +31,42 @@ class FirebaseWrapper {
         return exist
     }
     
-    func findRoomBasedOnRoomCodeInCloud(roomCode: String) -> Room? {
-        var room: Room?
-       
-        return room
+    func findRoomBasedOnSnapshot(snapshot: FDataSnapshot) -> Room? {
+        if let dictionary = snapshot.value as? [String: AnyObject] {
+            let roomName = dictionary["roomName"] as! String
+            let hostUser = dictionary["hostUser"] as! String
+            let members = dictionary["members"] as! [String]
+            let roomcode = snapshot.key
+            return Room(roomCode: roomcode, roomName: roomName, hostUser: hostUser, members: members)
+        } else {
+            return nil
+        }
+    
     }
- 
 }
 
-//if authData != nil {
-//    
-//    ref.observeEventType(.Value, withBlock: { (snapshot) -> Void in
-//        for aUser in snapshot.children {
-//            let user = User(snapshot: aUser as! FDataSnapshot)
-//            self.users.append(user)
-//        }
-//        self.tableView.reloadData()
-//    })
-//}
+
+
+//    func authEventListener(ref: Firebase!, completionHandler: ((FAuthData!) -> Void)!) {
+//        ref.observeAuthEventWithBlock(completionHandler)
+//    }
+//
+//    func observeValueEventWithRef(ref: Firebase!, completionHanlder: ((FDataSnapshot!) -> Void)!) {
+//        ref.observeEventType(.Value, withBlock: completionHanlder)
+//    }
+//
+//    func observeChildAddedEventWithRef(ref: Firebase!, completionHanlder: ((FDataSnapshot!) -> Void)!) {
+//        ref.observeEventType(.ChildAdded, withBlock: completionHanlder)
+//    }
+//
+//    func observeSingleEventWithRef(ref: Firebase!, completionHanlder: ((FDataSnapshot!) -> Void)!) {
+//        ref.observeSingleEventOfType(.Value, withBlock: completionHanlder)
+//    }
+//
+//    func setValueWithRef(ref: Firebase!, value:AnyObject) {
+//        ref.setValue(value)
+//    }
+//
+//    func updateValueWithRef(ref: Firebase!, value:AnyObject) {
+//        ref.updateChildValues(value as! [NSObject : AnyObject])
+//    }

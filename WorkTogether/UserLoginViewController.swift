@@ -15,22 +15,14 @@ class UserLoginViewController: UIViewController {
     @IBOutlet weak var passwordTextField: UITextField!
     @IBOutlet weak var nameTextField: UITextField!
     
-    
-    
-    let ref = Firebase(url: "https://worktogether.firebaseio.com")
-    let usersRef = Firebase(url: "https://worktogether.firebaseio.com/users")
-    
     var user: User!
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-//        ref.unauth()
-//        usersRef.unauth()
     }
     
     override func viewDidAppear(animated: Bool) {
-        usersRef.observeAuthEventWithBlock { (authData) -> Void in
+        FirebaseWrapper.Refs.allUsersRef.observeAuthEventWithBlock { (authData) -> Void in
             if authData != nil {
                 self.user = User(authData: authData)
                 FirebaseWrapper.Refs.allUsersRef.childByAppendingPath(authData.uid).observeSingleEventOfType(.Value, withBlock: { (snapshot) in
@@ -55,8 +47,6 @@ class UserLoginViewController: UIViewController {
         }
     }
 
-    
-    
     @IBAction func login(sender: UIButton) {
         
         guard let
@@ -68,7 +58,7 @@ class UserLoginViewController: UIViewController {
             return
         }
 
-        usersRef.authUser(email, password: password) { (error, authData) -> Void in
+        FirebaseWrapper.Refs.allUsersRef.authUser(email, password: password) { (error, authData) -> Void in
             if error == nil {
                 self.user = User(uid: authData.uid, name: name, email: email)
                 print("User \(name) has logged in!")
@@ -96,15 +86,15 @@ class UserLoginViewController: UIViewController {
                         return
                     }
                 
-                self.usersRef.createUser(email, password: password, withCompletionBlock: { (error) -> Void in
+                FirebaseWrapper.Refs.allUsersRef.createUser(email, password: password, withCompletionBlock: { (error) -> Void in
                     if error != nil {
                         print("Error in CreateUser: \(error.description)")
                     } else { // log user in
                         
-                        self.usersRef.authUser(email, password: password) { (error, authData) -> Void in
+                        FirebaseWrapper.Refs.allUsersRef.authUser(email, password: password) { (error, authData) -> Void in
                             if error == nil {
                                 self.user = User(uid: authData.uid, name: name, email: email)
-                                self.usersRef.childByAppendingPath("\(authData.uid)").setValue(self.user.toAnyObject())
+                                FirebaseWrapper.Refs.allUsersRef.childByAppendingPath("\(authData.uid)").setValue(self.user.toAnyObject())
                                 print("User \(name) has logged in!")
                             } else {
                                 print("Error in authUser: \(error.description)")
@@ -140,7 +130,7 @@ class UserLoginViewController: UIViewController {
     
     
     @IBAction func logout(segue: UIStoryboardSegue, sender: UIBarButtonItem) {
-        ref.unauth()
+        FirebaseWrapper.Refs.baseRef.unauth()
     }
 }
 
