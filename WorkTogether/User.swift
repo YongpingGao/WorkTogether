@@ -9,7 +9,7 @@
 import Foundation
 import Firebase
 
-struct User {
+class User {
     
     var uid:String
     var email: String

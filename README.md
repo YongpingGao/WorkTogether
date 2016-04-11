@@ -23,11 +23,11 @@ and it will share his screen to his team members at the same time.
 
 Host User:
 
-![Image of iphone2](screenshots/iphone3.PNG)
+![Image of host](screenshots/ipad.png)
 
 Another team member: 
 
-![Image of ipad](screenshots/ipad.png)
+![Image of guest](screenshots/iphone3.PNG)
 
 
 ## ToDo

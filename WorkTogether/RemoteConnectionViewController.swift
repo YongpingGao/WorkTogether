@@ -69,7 +69,8 @@ class RemoteConnectionViewController: UITableViewController {
         let OKAction = UIAlertAction(title: "OK", style: .Default) { (_) in
             if let textField = alertController.textFields?.first {
                 if textField.text != "" {
-                    let room = Room(roomName: textField.text!, hostUser: self.user.name)
+                    let room = Room(roomName: textField.text!, hostUser: self.user.uid)
+                    room.members.append(self.user.name)
                     let createRoomAlertController = UIAlertController(title: "Create Successful", message: "Your room ID is \" \(room.roomCode) \", tell your coworkers to join this room", preferredStyle: .Alert)
                     let okAction = UIAlertAction(title: "OK", style: .Cancel) { (_) -> Void in
                         FirebaseWrapper.Refs.roomsRef.childByAppendingPath(room.roomCode).setValue(room.serializeToDictionary())
@@ -134,13 +135,24 @@ class RemoteConnectionViewController: UITableViewController {
             if let splitViewController = segue.destinationViewController as? UISplitViewController {
                 if let navigationController = splitViewController.viewControllers.first as? UINavigationController {
                     if let roomMembersViewController = navigationController.topViewController as? RoomMembersViewController {
-                        if let drawingViewController = splitViewController.viewControllers.last as? DrawingViewController {
-                            if let row = tableView.indexPathForSelectedRow?.row {
-                                roomMembersViewController.room = rooms[row] // if select a specific row
-                                drawingViewController.room = rooms[row] // if select a specific row
-                            } else {
-                                roomMembersViewController.room = rooms.last // else triggered automatically
-                                drawingViewController.room = rooms.last // else triggered automatically
+                        if let navigationControllerDrawing = splitViewController.viewControllers.last as? UINavigationController {
+                            if let drawingViewController = navigationControllerDrawing.topViewController as? DrawingViewController {
+                                if let row = tableView.indexPathForSelectedRow?.row {
+                                    roomMembersViewController.room = rooms[row] // if select a specific row
+                                    drawingViewController.room = rooms[row] // if select a specific row
+                                    
+                                    if user.uid == rooms[row].hostUser {
+                                        drawingViewController.userInteractionEnabled = true
+                                    }
+                                    
+                                } else {
+                                    roomMembersViewController.room = rooms.last // else triggered automatically
+                                    drawingViewController.room = rooms.last // else triggered automatically
+                                    
+                                    if user.uid == rooms.last!.hostUser {
+                                        drawingViewController.userInteractionEnabled = true
+                                    }
+                                }
                             }
                         }
                     }

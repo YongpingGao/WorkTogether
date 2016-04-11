@@ -16,9 +16,18 @@ class DrawingViewController: UIViewController, DrawViewDelegate {
     var paths = [DrawingPath]()
     var room: Room!
     
+    var userInteractionEnabled: Bool = false
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         drawView.delegate = self
+        if !userInteractionEnabled {
+            drawView.userInteractionEnabled = false
+            navigationItem.title = "Guest Mode"
+        } else {
+            drawView.userInteractionEnabled = true
+            navigationItem.title = "Host Mode"
+        }
     }
     
     override func viewDidAppear(animated: Bool) {

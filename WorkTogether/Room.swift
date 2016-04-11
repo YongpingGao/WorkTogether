@@ -24,7 +24,6 @@ class Room {
     init(roomName: String, hostUser: String) {
         self.roomName = roomName
         self.hostUser = hostUser
-        members.append(hostUser)
     }
     
     init(roomCode: String, roomName: String, hostUser: String, members: [String]) {
